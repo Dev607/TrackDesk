@@ -25,20 +25,20 @@ public class UserService {
 
 	public User getUserById(Long id) {
 		return userRepo.findById(id)
-				//.orElseThrow(() -> new RuntimeException("User not found"));
-		.orElseThrow(() -> new ResourceNotFoundException("user","id",id));
-		
+				// .orElseThrow(() -> new RuntimeException("User not found"));
+				.orElseThrow(() -> new ResourceNotFoundException("user", "id", id));
+
 	}
 
 	public User saveUser(User user) {
 		try {
 			if (userRepo.existsByUsername(user.getUsername())) {
-                throw new DuplicateResourceException("User", "name", user.getUsername());
+				throw new DuplicateResourceException("User", "name", user.getUsername());
 			}
-			
+
 		} catch (DataIntegrityViolationException ex) {
 			log.error("Data integrity violation while creating user: {}", ex.getMessage());
-            throw new DuplicateResourceException("User", "name", user.getUsername());
+			throw new DuplicateResourceException("User", "name", user.getUsername());
 			// TODO: handle exception
 		}
 		return userRepo.save(user);

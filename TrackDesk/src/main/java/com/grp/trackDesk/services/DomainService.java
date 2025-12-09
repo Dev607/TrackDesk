@@ -18,18 +18,14 @@ public class DomainService {
 	
 private final DomainRepository  domainRepo;
 	
-
-
 	public List<TrDomain> getAllDomains() {
 		return domainRepo.findAll();
-
 	}
 	
 	public TrDomain getDomainById(Long id) {
 		return domainRepo.findById(id)
 				.orElseThrow(() -> new RuntimeException("Domain not found"));
 	}
-	
 	
 	public TrDomain saveDomain(TrDomain trDomain) {
 		return domainRepo.save(trDomain);

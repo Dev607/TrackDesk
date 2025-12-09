@@ -38,9 +38,9 @@ public class Ticket extends BaseEntity {
 	@NotBlank(message = "La description est obligatoire")
 	@Size(max = 255)
 	private String description;
-	
-	 @NotNull(message = "Le numéro du ticket est obligatoire")
-	    @Column(unique = true, nullable = false)
+
+	@NotNull(message = "Le numéro du ticket est obligatoire")
+	@Column(unique = true, nullable = false)
 	private Integer ticketNumber;
 
 	private Date slaDate;
@@ -52,25 +52,24 @@ public class Ticket extends BaseEntity {
 	private TicketStatus status; // New, Open, Assigned, In Progress, On Hold, Resolved, Closed, Reopened
 
 	@ManyToOne
-    @JoinColumn(name = "domain_id")
+	@JoinColumn(name = "domain_id")
 	private TrDomain domain; // payment, tradeFinance a prevoir une table
-	
+
 	@Enumerated(EnumType.STRING)
 	private RiskLevel risk; // high, low, medieum
 
-    @NotNull(message = "Le projet est obligatoire")
-    @ManyToOne
-    @JoinColumn(name = "project_id")
+	@NotNull(message = "Le projet est obligatoire")
+	@ManyToOne
+	@JoinColumn(name = "project_id")
 	private Project project;
 
-
-    @NotNull(message = "Créé par est obligatoire")
-    @ManyToOne
-    @JoinColumn(name = "created_by")
+	@NotNull(message = "Créé par est obligatoire")
+	@ManyToOne
+	@JoinColumn(name = "created_by")
 	private User createdBy;
 
-    @ManyToOne
-    @JoinColumn(name = "assigned_to")
+	@ManyToOne
+	@JoinColumn(name = "assigned_to")
 	private User assignedTo;
 
 	@Size(max = 255)
