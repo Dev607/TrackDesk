@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.grp.trackDesk.dto.TicketDTO;
+import com.grp.trackDesk.dto.TicketResponseDTO;
+import com.grp.trackDesk.dto.TicketUpdateDTO;
 import com.grp.trackDesk.models.Project;
 import com.grp.trackDesk.models.Ticket;
 import com.grp.trackDesk.models.TrDomain;
@@ -60,6 +62,8 @@ public class TicketService {
 	                    .orElseThrow(() -> new RuntimeException("Domain not found"));
 	            ticket.setDomain(domain);
 	        }
+	        
+	        ticket.setTicketNumber(generateNextTicketNumber());
 
 	        return ticketRepository.save(ticket);
 
@@ -71,7 +75,7 @@ public class TicketService {
 	 */
 	 
 	 @Transactional
-	public Ticket updateTicket(Long id, TicketDTO dto) {
+	public Ticket updateTicket(Long id, TicketUpdateDTO dto) {
 		
 		Ticket ticket = getTicketById(id);
 
@@ -79,7 +83,9 @@ public class TicketService {
         if (dto.getDescription() != null) ticket.setDescription(dto.getDescription());
         if (dto.getPriority() != null) ticket.setPriority(dto.getPriority());
         if (dto.getStatus() != null) ticket.setStatus(dto.getStatus());
-        
+        if (dto.getSlaDate() != null) ticket.setSlaDate(dto.getSlaDate());
+        if (dto.getAssignedTo() != null) ticket.setAssignedTo(dto.getAssignedTo());
+        if (dto.getRisk() != null) ticket.setRisk(dto.getRisk());
         
         if (dto.getProjectId() != null) {
             Project project = projectRepository.findById(dto.getProjectId())
@@ -92,12 +98,11 @@ public class TicketService {
                     .orElseThrow(() -> new RuntimeException("Domain not found"));
             ticket.setDomain(domain);
         }
-
+        
         ticket.setUpdatedAt(LocalDateTime.now());
         
         return ticketRepository.save(ticket);
-
-
+        
 	}
 
 	/**
@@ -194,5 +199,31 @@ public class TicketService {
         Ticket ticket = getTicketById(id);
         ticketRepository.delete(ticket);
     }
+	
+	
+	public TicketResponseDTO toResponseDTO(Ticket ticket) {
+	    TicketResponseDTO dto = new TicketResponseDTO();
+
+	    dto.setId(ticket.getId());
+	    dto.setName(ticket.getName());
+	    dto.setDescription(ticket.getDescription());
+	    dto.setTicketNumber(ticket.getTicketNumber());
+	    dto.setPriority(ticket.getPriority());
+	    dto.setStatus(ticket.getStatus());
+	    dto.setCreatedAt(ticket.getCreatedAt());
+	    dto.setUpdatedAt(ticket.getUpdatedAt());
+
+	    if (ticket.getProject() != null) {
+	        dto.setProjectId(ticket.getProject().getId());
+	        dto.setProjectName(ticket.getProject().getName());
+	    }
+
+	    if (ticket.getCreatedBy() != null) {
+	        dto.setCreatedById(ticket.getCreatedBy().getId());
+	        dto.setCreatedByUsername(ticket.getCreatedBy().getUsername());
+	    }
+
+	    return dto;
+	}
 
 }

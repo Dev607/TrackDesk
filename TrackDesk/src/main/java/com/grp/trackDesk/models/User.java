@@ -35,7 +35,7 @@ public class User extends BaseEntity {
 
 	@Column(nullable = false)
 	private String password;
-	@NotBlank
+
 	@Enumerated(EnumType.STRING)
 	private UserRole role;
 	@NotBlank
@@ -44,7 +44,7 @@ public class User extends BaseEntity {
 	private String lastName;
 	@NotBlank
 	private String phone;
-	@NotBlank
+
 	@Enumerated(EnumType.STRING)
 	private UserStatus status;
 	/*

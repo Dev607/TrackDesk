@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.grp.trackDesk.dto.TicketDTO;
+import com.grp.trackDesk.dto.TicketResponseDTO;
+import com.grp.trackDesk.dto.TicketUpdateDTO;
 import com.grp.trackDesk.models.Ticket;
 import com.grp.trackDesk.services.TicketService;
 
@@ -28,29 +30,37 @@ public class TicketController {
 	 private final TicketService ticketService;
 
 	    @PostMapping
-	    public ResponseEntity<Ticket> createTicket(@Valid @RequestBody TicketDTO dto,
+	    public ResponseEntity<TicketResponseDTO> createTicket(@Valid @RequestBody TicketDTO dto,
 	    		@RequestHeader("X-User-Email") String creatorEmail) {
 	        Ticket created = ticketService.createTicket(dto, creatorEmail);
-	        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+	        return ResponseEntity
+	        		.status(HttpStatus.CREATED)
+	        		.body(ticketService.toResponseDTO(created));
 	    }
 
 	    @GetMapping("/{id}")
-	    public ResponseEntity<Ticket> getTicket(@PathVariable Long id) {
-	        return ResponseEntity.ok(ticketService.getTicketById(id));
+	    public ResponseEntity<TicketResponseDTO> getTicket(@PathVariable Long id) {
+	    	Ticket ticket = ticketService.getTicketById(id);
+	        return ResponseEntity.ok(ticketService.toResponseDTO(ticket));
 	    }
 
 	    @GetMapping
-	    public ResponseEntity<List<Ticket>> getAllTickets() {
-	        return ResponseEntity.ok(ticketService.getAllTickets());
+	    public ResponseEntity<List<TicketResponseDTO>> getAllTickets() {
+	    	 List<TicketResponseDTO> list = ticketService.getAllTickets()
+	                 .stream()
+	                 .map(ticketService::toResponseDTO)
+	                 .toList();
+	         return ResponseEntity.ok(list);
 	    }
 
 	    @PutMapping("/{id}")
-	    public ResponseEntity<Ticket> updateTicket(
+	    public ResponseEntity<TicketResponseDTO> updateTicket(
 	            @PathVariable Long id,
-	            @Valid @RequestBody TicketDTO dto
+	            @RequestBody TicketUpdateDTO dto
 	    ) {
 	        Ticket updated = ticketService.updateTicket(id, dto);
-	        return ResponseEntity.ok(updated);
+	        return ResponseEntity.status(HttpStatus.OK)
+	        		.body(ticketService.toResponseDTO(updated));
 	    }
 
 	    @DeleteMapping("/{id}")
