@@ -4,10 +4,12 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
+
 
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,9 +18,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.stream.Collectors;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.stream.Collectors;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.authentication.BadCredentialsException;
 
 @Slf4j
 @RestControllerAdvice
@@ -109,5 +112,21 @@ public class GlobalExceptionHandler {
 		log.error("Unexpected error: {}", ex.getMessage(), ex);
 
 		return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	
+	@ExceptionHandler(AuthenticationException.class)
+	public ResponseEntity<ApiError> handleAuthenticationException(
+	        AuthenticationException ex,
+	        HttpServletRequest request) {
+
+	    ApiError error = new ApiError(
+	            HttpStatus.UNAUTHORIZED,
+	            "Email ou mot de passe incorrect"
+	    );
+
+	    error.setPath(request.getRequestURI());
+
+	    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
 	}
 }
