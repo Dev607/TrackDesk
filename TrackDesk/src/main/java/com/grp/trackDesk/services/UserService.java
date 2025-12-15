@@ -186,7 +186,7 @@ public class UserService implements UserDetailsService {
 	        }
 	        
 	        return new org.springframework.security.core.userdetails.User(
-	                user.getUsername(),
+	                user.getEmail(),
 	                user.getPassword(),
 	                user.getStatus().equals(UserStatus.ENABLED),
 	                true, // account non expiré

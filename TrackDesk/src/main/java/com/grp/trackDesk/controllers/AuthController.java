@@ -95,7 +95,7 @@ public class AuthController {
             User user = userService.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
             
-            String token = jwtService.generateToken(user.getUsername());
+            String token = jwtService.generateToken(user.getEmail());
             
             AuthResponseDTO response = AuthResponseDTO.builder()
                 .token(token)
